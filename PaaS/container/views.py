@@ -111,18 +111,6 @@ def remove_container(request):
         return JsonResponse({'errno': 2005, 'msg': '删除容器失败'})
 
 
-@csrf_exempt
-def update_container(request):
-    """删除容器"""
-    try:
-        container = client.containers.get(request.POST.get('container_id'))
-        container.stop()
-        container.remove()
-        return JsonResponse({'errno': 0, 'msg': '删除容器成功', 'container_id': container.id})
-    except:
-        return JsonResponse({'errno': 2005, 'msg': '删除容器失败'})
-
-
 def get_port():
     pscmd = "netstat -ntl |grep -v Active| grep -v Proto|awk '{print $4}'|awk -F: '{print $NF}'"
     procs = os.popen(pscmd).read()
