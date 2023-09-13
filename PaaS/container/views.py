@@ -10,12 +10,18 @@ client = docker.from_env()
 
 
 @csrf_exempt
-def get_container_list(request):
-    """获取容器id列表"""
+def list_containers(request):
+    """获取容器列表"""
     containers = client.containers.list(all=True)
     data = []
     for container in containers:
-        data.append(container.id)
+        data.append({
+            'id': container.id,
+            'name': container.name,
+            'create_time': list(container.attrs.items())[1][1],
+            'image': container.image.id,
+            'status': container.status
+        })
     return JsonResponse({'errno': 0, 'data': data})
 
 
@@ -25,9 +31,11 @@ def get_container_info(request):
     container = client.containers.get(request.POST.get('container_id'))
     data = {
         'id': container.id,
-        'create_time': list(container.attrs.items())[1][1],
-        'port': list(container.attrs.items())[18][1]['PortBindings'],
         'name': container.name,
+        'create_time': list(container.attrs.items())[1][1],
+        'image': container.image.id,
+        'port': list(container.attrs.items())[18][1]['PortBindings'],
+        'labels': container.labels,
         'status': container.status
     }
     try:
@@ -35,10 +43,6 @@ def get_container_info(request):
             data['port'][key] = data['port'][key][0]['HostPort']
     except:
         data['port'] = {}
-    try:
-        data['image'] = container.image.tags[0]
-    except:
-        data['image'] = 'unknown'
     return JsonResponse({'errno': 0, 'data': data})
 
 
