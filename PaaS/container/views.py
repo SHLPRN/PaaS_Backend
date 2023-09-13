@@ -33,7 +33,7 @@ def get_container_info(request):
         'id': container.id,
         'name': container.name,
         'create_time': list(container.attrs.items())[1][1],
-        'image': container.image.id,
+        'image_id': container.image.id,
         'port': list(container.attrs.items())[18][1]['PortBindings'],
         'labels': container.labels,
         'status': container.status
