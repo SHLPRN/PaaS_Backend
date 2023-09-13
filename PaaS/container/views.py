@@ -19,7 +19,7 @@ def list_containers(request):
             'id': container.id,
             'name': container.name,
             'create_time': list(container.attrs.items())[1][1],
-            'image': container.image.id,
+            'image_id': container.image.id,
             'status': container.status
         })
     return JsonResponse({'errno': 0, 'data': data})
