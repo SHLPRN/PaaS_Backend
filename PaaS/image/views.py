@@ -15,7 +15,7 @@ def list_images():
     for image in images:
         dic = {}
         dic["attrs"] = image.attrs
-        dic["labels"] = image.id
+        dic["id"] = image.id
         dic["labels"] = image.labels
         dic["short_id"] = image.short_id
         dic["tags"] = image.tags
