@@ -9,7 +9,7 @@ config.load_kube_config()
 docker_client = docker.from_env()
 
 @csrf_exempt
-def list_images():
+def list_images(request):
     images = docker_client.images.list()
     imageList = []
     for image in images:
@@ -24,14 +24,14 @@ def list_images():
 
 
 @csrf_exempt
-def remove_image():
+def remove_image(request):
     image_id = request.POST.get("image_id")
     docker_client.images.remove(image_id)
     return JsonResponse({"errno": 0, "msg": "删除成功"})
 
 
 @csrf_exempt
-def pull_image():
+def pull_image(request):
     repository = request.POST.get("repository")
     try:
         docker_client.images.pull(repository=repository)
@@ -41,7 +41,7 @@ def pull_image():
 
 
 @csrf_exempt
-def build_image():
+def build_image(request):
     dockerfile = request.FILES["dockerfile"]
     tag = request.POST.get("tag")
     docker_client.images.build(fileobj=dockerfile, tag=tag)
