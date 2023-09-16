@@ -42,7 +42,7 @@ def pull_image(request):
 
 @csrf_exempt
 def build_image(request):
-    dockerfile = request.FILES["dockerfile"]
+    dockerfile = request.FILES.get("dockerfile")
     tag = request.POST.get("tag")
     docker_client.images.build(fileobj=dockerfile, tag=tag)
     return JsonResponse({"errno": 0, "msg": "创建镜像成功"})
