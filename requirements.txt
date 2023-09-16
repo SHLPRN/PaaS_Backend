@@ -1,5 +1,5 @@
 Django==4.2
 django-cors-headers==3.13.0
-docker_py==1.10.6
+docker==2.1.0
 kubernetes==27.2.0
 PyYAML==6.0.1
