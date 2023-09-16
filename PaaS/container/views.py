@@ -19,7 +19,12 @@ def list_containers(request):
             'id': container.id,
             'name': container.name,
             'create_time': list(container.attrs.items())[1][1],
-            'image_id': container.image.id,
+            'image': {
+                'id': container.image.id,
+                'tags': container.image.tags
+            },
+            'labels': container.labels,
+            'short_id': container.short_id,
             'status': container.status
         })
     return JsonResponse({'errno': 0, 'data': data})
@@ -49,14 +54,17 @@ def get_container_info(request):
 @csrf_exempt
 def create_container(request):
     """创建容器"""
-    image = request.POST.get('image')
-    inner_port = request.POST.get('inner_port')
-    outer_port = request.POST.get('outer_port')
-    ports = {inner_port + '/tcp': outer_port}
+    command = request.POST.get('command').split(',')
+    environment = request.POST.get('environment').split(',')
+    container_ports = request.POST.get('container_ports').split(',')
+    host_posts = request.POST.get('host_posts').split(',')
+    volumes = request.POST.get('volumes').split(',')
+    ports = {}
+    for container_port, host_port in zip(container_ports, host_posts):
+        ports[container_port] = host_port
     try:
-        if ports == {'22/tcp': '22'}:
-            ports['22/tcp'] = str(get_port())
-        container = client.containers.create(image, ports=ports)
+        container = client.containers.create(image=request.POST.get('image'), detach=True, environment=environment,
+                                          name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
         return JsonResponse({'errno': 0, 'msg': '创建容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2001, 'msg': '创建容器失败'})
@@ -76,17 +84,17 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
-    image = request.POST.get('image')
-    inner_port = request.POST.get('inner_port')
-    outer_port = request.POST.get('outer_port')
-    name = request.POST.get('name')
-    environment = {} if request.POST.get('environment') is None else dict(request.POST.get('environment'))
-    # command = "" if request.POST.get('command') is None else request.POST.get('command')
-    ports = {inner_port + '/tcp': outer_port}
+    command = request.POST.get('command').split(',')
+    environment = request.POST.get('environment').split(',')
+    container_ports = request.POST.get('container_ports').split(',')
+    host_posts = request.POST.get('host_posts').split(',')
+    volumes = request.POST.get('volumes').split(',')
+    ports = {}
+    for container_port, host_port in zip(container_ports, host_posts):
+        ports[container_port] = host_port
     try:
-        if ports == {'22/tcp': '22'}:
-            ports['22/tcp'] = str(get_port())
-        container = client.containers.run(image, detach=True, environment=environment, name=name, ports=ports)
+        container = client.containers.run(image=request.POST.get('image'), detach=True, environment=environment,
+                                          name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
         return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
@@ -115,12 +123,12 @@ def remove_container(request):
         return JsonResponse({'errno': 2005, 'msg': '删除容器失败'})
 
 
-def get_port():
-    pscmd = "netstat -ntl |grep -v Active| grep -v Proto|awk '{print $4}'|awk -F: '{print $NF}'"
-    procs = os.popen(pscmd).read()
-    procarr = procs.split("\n")
-    tt = random.randint(15000, 20000)
-    if tt not in procarr:
-        return tt
-    else:
-        get_port()
+@csrf_exempt
+def restart_container(request):
+    """重启容器"""
+    try:
+        container = client.containers.get(request.POST.get('container_id'))
+        container.restart()
+        return JsonResponse({'errno': 0, 'msg': '重启容器成功', 'container_id': container.id})
+    except:
+        return JsonResponse({'errno': 2006, 'msg': '重启容器失败'})

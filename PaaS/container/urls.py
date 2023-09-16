@@ -9,4 +9,5 @@ urlpatterns = [
     path('run_container', run_container, name='run_container'),
     path('stop_container', stop_container, name='stop_container'),
     path('remove_container', remove_container, name='remove_container'),
+    path('restart_container', restart_container, name='restart_container'),
 ]
