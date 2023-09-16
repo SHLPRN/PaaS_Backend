@@ -86,6 +86,8 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
+    print(request.POST.get('command'), request.POST.get('environment'), request.POST.get('container_ports'),
+          request.POST.get('host_ports'))
     command = None if request.POST.get('command') is None else request.POST.get('command').split(',')
     environment = None if request.POST.get('environment') is None else request.POST.get('environment').split(',')
     container_ports = None if request.POST.get('container_ports') is None \
