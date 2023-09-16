@@ -54,14 +54,16 @@ def get_container_info(request):
 @csrf_exempt
 def create_container(request):
     """创建容器"""
-    command = request.POST.get('command').split(',')
-    environment = request.POST.get('environment').split(',')
-    container_ports = request.POST.get('container_ports').split(',')
-    host_posts = request.POST.get('host_posts').split(',')
-    volumes = request.POST.get('volumes').split(',')
+    command = '' if request.POST.get('command') is None else request.POST.get('command').split(',')
+    environment = '' if request.POST.get('environment') is None else request.POST.get('environment').split(',')
+    container_ports = '' if request.POST.get('container_ports') is None \
+        else request.POST.get('container_ports').split(',')
+    host_posts = '' if request.POST.get('host_posts') is None else request.POST.get('host_posts').split(',')
+    volumes = '' if request.POST.get('volumes') is None else request.POST.get('volumes').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
-        ports[container_port] = host_port
+        if container_port != '' and host_port != '':
+            ports[container_port] = host_port
     try:
         container = client.containers.create(image=request.POST.get('image'), detach=True, environment=environment,
                                           name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
@@ -84,14 +86,16 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
-    command = request.POST.get('command').split(',')
-    environment = request.POST.get('environment').split(',')
-    container_ports = request.POST.get('container_ports').split(',')
-    host_posts = request.POST.get('host_posts').split(',')
-    volumes = request.POST.get('volumes').split(',')
+    command = '' if request.POST.get('command') is None else request.POST.get('command').split(',')
+    environment = '' if request.POST.get('environment') is None else request.POST.get('environment').split(',')
+    container_ports = '' if request.POST.get('container_ports') is None \
+        else request.POST.get('container_ports').split(',')
+    host_posts = '' if request.POST.get('host_posts') is None else request.POST.get('host_posts').split(',')
+    volumes = '' if request.POST.get('volumes') is None else request.POST.get('volumes').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
-        ports[container_port] = host_port
+        if container_port != '' and host_port != '':
+            ports[container_port] = host_port
     try:
         container = client.containers.run(image=request.POST.get('image'), detach=True, environment=environment,
                                           name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
