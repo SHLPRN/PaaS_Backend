@@ -132,3 +132,14 @@ def restart_container(request):
         return JsonResponse({'errno': 0, 'msg': '重启容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2006, 'msg': '重启容器失败'})
+
+
+@csrf_exempt
+def rename_container(request):
+    """重命名容器"""
+    try:
+        container = client.containers.get(request.POST.get('container_id'))
+        container.rename(request.POST.get('new_name'))
+        return JsonResponse({'errno': 0, 'msg': '重命名容器成功', 'container_id': container.id})
+    except:
+        return JsonResponse({'errno': 2007, 'msg': '重命名容器失败'})
