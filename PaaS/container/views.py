@@ -104,8 +104,8 @@ def run_container(request):
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
     """
-    container = client.containers.run(image=request.POST.get('image'), detach=True, environment=environment,
-                                      name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
+    container = client.containers.run(image=request.POST.get('image'), detach=True,
+                                      name=request.POST.get('name'), ports=ports)
     return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
 
 
