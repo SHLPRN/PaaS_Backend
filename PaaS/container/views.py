@@ -87,7 +87,7 @@ def start_container(request):
 def run_container(request):
     """运行容器"""
     command = None if request.POST.get('command') is None or '' else request.POST.get('command').split(',')
-    environment = None if request.POST.get('environment') is None or '' else request.POST.get('environment').split(',')
+    environment = [] if request.POST.get('environment') is None or '' else request.POST.get('environment').split(',')
     container_ports = '' if request.POST.get('container_ports') is None or '' \
         else request.POST.get('container_ports').split(',')
     host_posts = '' if request.POST.get('host_posts') is None or '' else request.POST.get('host_posts').split(',')
