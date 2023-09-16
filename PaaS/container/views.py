@@ -86,12 +86,10 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
-    # command = None if request.POST.get('command') is None or '' else request.POST.get('command').split(',')
-    environment = {} if request.POST.get('environment') is None or '' else request.POST.get('environment').split(',')
+    environment = request.POST.get('environment')
     container_ports = '' if request.POST.get('container_ports') is None or '' \
         else request.POST.get('container_ports').split(',')
     host_posts = '' if request.POST.get('host_posts') is None or '' else request.POST.get('host_posts').split(',')
-    # volumes = None if request.POST.get('volumes') is None or '' else request.POST.get('volumes').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
@@ -104,8 +102,12 @@ def run_container(request):
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
     """
-    container = client.containers.run(image=request.POST.get('image'), detach=True,
-                                      name=request.POST.get('name'), ports=ports)
+    if environment is None or '':
+        container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
+                                          detach=True)
+    else:
+        container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
+                                          environment=environment.split(','), detach=True)
     return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
 
 
