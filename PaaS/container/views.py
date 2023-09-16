@@ -86,12 +86,12 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
-    command = '' if request.POST.get('command') is None else request.POST.get('command').split(',')
-    environment = '' if request.POST.get('environment') is None else request.POST.get('environment').split(',')
-    container_ports = '' if request.POST.get('container_ports') is None \
+    command = None if request.POST.get('command') is None else request.POST.get('command').split(',')
+    environment = None if request.POST.get('environment') is None else request.POST.get('environment').split(',')
+    container_ports = None if request.POST.get('container_ports') is None \
         else request.POST.get('container_ports').split(',')
-    host_posts = '' if request.POST.get('host_posts') is None else request.POST.get('host_posts').split(',')
-    volumes = '' if request.POST.get('volumes') is None else request.POST.get('volumes').split(',')
+    host_posts = None if request.POST.get('host_posts') is None else request.POST.get('host_posts').split(',')
+    volumes = None if request.POST.get('volumes') is None else request.POST.get('volumes').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
