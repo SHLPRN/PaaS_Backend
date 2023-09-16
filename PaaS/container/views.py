@@ -96,12 +96,17 @@ def run_container(request):
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
             ports[container_port] = host_port
+    """
     try:
         container = client.containers.run(image=request.POST.get('image'), detach=True, environment=environment,
                                           name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
         return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
+    """
+    container = client.containers.run(image=request.POST.get('image'), detach=True, environment=environment,
+                                      name=request.POST.get('name'), ports=ports, command=command, volumes=volumes)
+    return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
 
 
 @csrf_exempt
