@@ -41,10 +41,7 @@ def create_container(request):
     host_posts = request.POST.get('host_ports').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
-        if container_port != '':
-            if host_port == '':
-                host_port = None
-            ports[container_port] = host_port
+        ports[container_port] = host_port
     try:
         container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
                                           command=command, environment=environment, volumes=volumes, detach=True)
@@ -74,10 +71,7 @@ def run_container(request):
     host_posts = request.POST.get('host_ports').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
-        if container_port != '':
-            if host_port == '':
-                host_port = None
-            ports[container_port] = None
+        ports[container_port] = host_port
     try:
         container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
                                           command=command, environment=environment, volumes=volumes, detach=True)
