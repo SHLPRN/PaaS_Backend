@@ -27,7 +27,7 @@ def list_containers(request):
             'port': [
                 {
                     'container_port': container_port,
-                    'host_port': list(container.attrs.items())[18][1]['PortBindings'][container_port]['HostPort']
+                    'host_port': (list(container.attrs.items())[18][1]['PortBindings'])[container_port]['HostPort']
                 } for container_port in list(container.attrs.items())[18][1]['PortBindings'].keys()
             ],
             'labels': container.labels,
