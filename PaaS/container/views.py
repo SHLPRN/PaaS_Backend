@@ -24,18 +24,19 @@ def list_containers(request):
                 'id': container.image.id,
                 'tags': container.image.tags
             },
-            """
-            'port': [
-                {
-                    'container_port': container_port,
-                    'host_port': (list(container.attrs.items())[18][1]['PortBindings'])[container_port]['HostPort']
-                } for container_port in list(container.attrs.items())[18][1]['PortBindings'].keys()
-            ],
-            """
             'port': list(container.attrs.items())[18][1]['PortBindings'],
             'labels': container.labels,
             'status': container.status
         })
+
+    """
+    'port': [
+        {
+            'container_port': container_port,
+            'host_port': (list(container.attrs.items())[18][1]['PortBindings'])[container_port]['HostPort']
+        } for container_port in list(container.attrs.items())[18][1]['PortBindings'].keys()
+    ],
+    """
     return JsonResponse({'errno': 0, 'data': data})
 
 
