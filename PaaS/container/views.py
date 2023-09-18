@@ -107,7 +107,7 @@ def run_container(request):
             ports[container_port] = host_port
     print(type(request.POST.get('command')), request.POST.get('command'), type(request.POST.get('environment')),
           request.POST.get('environment'), type(container_ports), container_ports, type(host_posts), host_posts)
-    container = client.containers.run(image='nginx', name='test_nginx', ports={'80/tcp': 12223}, environment=None,
+    container = client.containers.run(image='nginx', name='test_nginx_1', ports={'80/tcp': 12223}, environment=None,
                                       command=None, detach=True)
     """
     try:
