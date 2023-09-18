@@ -77,7 +77,7 @@ def run_container(request):
         if container_port != '':
             if host_port == '':
                 host_port = None
-            ports[container_port] = host_port
+            ports[container_port] = None
     try:
         container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
                                           command=command, environment=environment, volumes=volumes, detach=True)
