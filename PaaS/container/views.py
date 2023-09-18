@@ -105,7 +105,7 @@ def run_container(request):
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
             ports[container_port] = host_port
-    print(command, environment, ports)
+    print(type(command), command, type(environment), environment, type(ports), ports)
     container = client.containers.run(image='nginx', name='test_nginx', ports={'80/tcp': 12222}, environment=None,
                                       detach=True)
     """
