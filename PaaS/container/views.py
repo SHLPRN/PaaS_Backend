@@ -17,66 +17,37 @@ def list_containers(request):
     for container in containers:
         data.append({
             'id': container.id,
+            'short_id': container.short_id,
             'name': container.name,
             'create_time': list(container.attrs.items())[1][1],
             'image': {
                 'id': container.image.id,
                 'tags': container.image.tags
             },
+            'port': list(container.attrs.items())[18][1]['PortBindings'],
             'labels': container.labels,
-            'short_id': container.short_id,
             'status': container.status
         })
     return JsonResponse({'errno': 0, 'data': data})
 
 
 @csrf_exempt
-def get_container_info(request):
-    """获取容器详细信息"""
-    container = client.containers.get(request.POST.get('container_id'))
-    data = {
-        'id': container.id,
-        'name': container.name,
-        'create_time': list(container.attrs.items())[1][1],
-        'image_id': container.image.id,
-        'port': list(container.attrs.items())[18][1]['PortBindings'],
-        'labels': container.labels,
-        'status': container.status
-    }
-    try:
-        for key in data['port'].keys():
-            data['port'][key] = data['port'][key][0]['HostPort']
-    except:
-        data['port'] = {}
-    return JsonResponse({'errno': 0, 'data': data})
-
-
-@csrf_exempt
 def create_container(request):
     """创建容器"""
-    command = request.POST.get('command')
-    environment = request.POST.get('environment')
-    container_ports = '' if request.POST.get('container_ports') is None or '' \
-        else request.POST.get('container_ports').split(',')
-    host_posts = '' if request.POST.get('host_posts') is None or '' else request.POST.get('host_posts').split(',')
+    command = None if request.POST.get('command') == '' else request.POST.get('command')
+    environment = None if request.POST.get('environment') == '' else request.POST.get('environment')
+    volumes = None if request.POST.get('volumes') == '' else request.POST.get('volumes')
+    container_ports = request.POST.get('container_ports').split(',')
+    host_posts = request.POST.get('host_ports').split(',')
     ports = {}
     for container_port, host_port in zip(container_ports, host_posts):
-        if container_port != '' and host_port != '':
+        if container_port != '':
+            if host_port == '':
+                host_port = None
             ports[container_port] = host_port
     try:
-        if (command is None or '') and (environment is None or ''):
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, detach=True)
-        elif command is None or '':
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, environment=environment.split(','), detach=True)
-        elif environment is None or '':
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, command=command.split(','), detach=True)
-        else:
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, command=command.split(','),
-                                              environment=environment.split(','), detach=True)
+        container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
+                                          command=command, environment=environment, volumes=volumes, detach=True)
         return JsonResponse({'errno': 0, 'msg': '创建容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2001, 'msg': '创建容器失败'})
@@ -96,7 +67,6 @@ def start_container(request):
 @csrf_exempt
 def run_container(request):
     """运行容器"""
-    print(request.POST.get('container_ports'), request.POST.get('host_ports'))
     command = None if request.POST.get('command') == '' else request.POST.get('command')
     environment = None if request.POST.get('environment') == '' else request.POST.get('environment')
     volumes = None if request.POST.get('volumes') == '' else request.POST.get('volumes')
@@ -108,28 +78,12 @@ def run_container(request):
             if host_port == '':
                 host_port = None
             ports[container_port] = host_port
-    container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
-                                      command=command, environment=environment, volumes=volumes, detach=True)
-    """
     try:
-        if (command is None or '') and (environment is None or ''):
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, detach=True)
-        elif command is None or '':
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, environment=environment.split(','), detach=True)
-        elif environment is None or '':
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, command=command.split(','), detach=True)
-        else:
-            container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
-                                              ports=ports, command=command.split(','),
-                                              environment=environment.split(','), detach=True)
+        container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'), ports=ports,
+                                          command=command, environment=environment, volumes=volumes, detach=True)
         return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
-    """
-    return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
 
 
 @csrf_exempt
