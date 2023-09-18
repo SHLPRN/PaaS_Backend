@@ -63,10 +63,6 @@ def create_container(request):
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
             ports[container_port] = host_port
-    print(command, environment, ports)
-    container = client.containers.run(image='nginx', name='test_nginx', ports={'80/tcp': 12222}, environment=None,
-                                      detach=True)
-    """
     try:
         if (command is None or '') and (environment is None or ''):
             container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
@@ -84,8 +80,6 @@ def create_container(request):
         return JsonResponse({'errno': 0, 'msg': '创建容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2001, 'msg': '创建容器失败'})
-    """
-    return JsonResponse({'errno': 0, 'msg': '创建容器成功', 'container_id': container.id})
 
 
 @csrf_exempt
@@ -111,6 +105,10 @@ def run_container(request):
     for container_port, host_port in zip(container_ports, host_posts):
         if container_port != '' and host_port != '':
             ports[container_port] = host_port
+    print(command, environment, ports)
+    container = client.containers.run(image='nginx', name='test_nginx', ports={'80/tcp': 12222}, environment=None,
+                                      detach=True)
+    """
     try:
         if (command is None or '') and (environment is None or ''):
             container = client.containers.run(image=request.POST.get('image'), name=request.POST.get('name'),
@@ -128,6 +126,8 @@ def run_container(request):
         return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
     except:
         return JsonResponse({'errno': 2003, 'msg': '运行容器失败'})
+    """
+    return JsonResponse({'errno': 0, 'msg': '运行容器成功', 'container_id': container.id})
 
 
 @csrf_exempt
