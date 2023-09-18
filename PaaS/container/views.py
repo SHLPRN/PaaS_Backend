@@ -24,15 +24,18 @@ def list_containers(request):
                 'id': container.image.id,
                 'tags': container.image.tags
             },
-            'port': [
-                {
-                    'container_port': container_port,
-                    'host_port': list(container.attrs.items())[18][1]['PortBindings'][container_port][0]['HostPort']
-                } for container_port in list(container.attrs.items())[18][1]['PortBindings'].keys()
-            ],
+            'ports': [],
             'labels': container.labels,
             'status': container.status
         })
+        raw_ports = list(container.attrs.items())[18][1]['PortBindings']
+        if raw_ports is not None:
+            data[-1]['ports'] = [
+                {
+                    'container_port': container_port,
+                    'host_port': raw_ports[container_port][0]['HostPort']
+                } for container_port in raw_ports.keys()
+            ]
     return JsonResponse({'errno': 0, 'data': data})
 
 
