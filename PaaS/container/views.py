@@ -22,6 +22,7 @@ def list_containers(request):
             'create_time': list(container.attrs.items())[1][1],
             'image': {
                 'id': container.image.id,
+                'short_id': container.image.short_id,
                 'tags': container.image.tags
             },
             'ports': [],
