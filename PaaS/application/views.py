@@ -19,8 +19,7 @@ def list_nodes(request):
             'create_time': node.metadata.creation_timestamp,
             'hostname': None,
             'internal_ip': None,
-            'allocatable': node.status.allocatable,
-            'capacity': node.status.capacity
+            'allocatable': node.status.allocatable
         })
         for address in node.status.addresses:
             if address.type == 'Hostname':
