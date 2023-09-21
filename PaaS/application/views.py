@@ -139,15 +139,15 @@ def create_service(request):
     """创建service"""
     service = yaml.safe_load(request.FILES.get('config'))
     client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
-    JsonResponse({'errno': 0, 'msg': '创建service成功'})
     """
-    try:
-        service = yaml.safe_load(request.FILES.get('config'))
-        client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
-        JsonResponse({'errno': 0, 'msg': '创建service成功'})
-    except:
-        return JsonResponse({'errno': 3004, 'msg': '创建service失败'})
-    """
+        try:
+            service = yaml.safe_load(request.FILES.get('config'))
+            client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
+            JsonResponse({'errno': 0, 'msg': '创建service成功'})
+        except:
+            return JsonResponse({'errno': 3004, 'msg': '创建service失败'})
+        """
+    return JsonResponse({'errno': 0, 'msg': '创建service成功'})
 
 
 @csrf_exempt
