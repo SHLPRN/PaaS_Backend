@@ -8,6 +8,23 @@ config.load_kube_config(config_file='./application/config/kubeconfig.yaml')
 
 
 @csrf_exempt
+def list_nodes(request):
+    """获取node列表"""
+    node_list = client.CoreV1Api().list_node()
+    data = [
+        {
+            'name': node.metadata.name,
+            'kind': node.kind,
+            'create_time': node.metadata.creation_timestamp,
+            'addresses': node.status.addresses,
+            'allocatable': node.status.allocatable,
+            'capacity': node.status.capacity
+        } for node in node_list.items
+    ]
+    return JsonResponse({'errno': 0, 'data': data})
+
+
+@csrf_exempt
 def list_pods(request):
     """获取pod列表"""
     pod_list = client.CoreV1Api().list_namespaced_pod(namespace='default', watch=False)
@@ -15,6 +32,7 @@ def list_pods(request):
         {
             'name': pod.metadata.name,
             'create_time': pod.metadata.creation_timestamp,
+            'node_name': pod.spec.node_name,
             'pod_ip': pod.status.pod_ip,
             'labels': pod.metadata.labels,
             'containers': [
