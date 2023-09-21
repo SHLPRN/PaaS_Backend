@@ -46,11 +46,13 @@ def pull_image(request):
 
 @csrf_exempt
 def build_image(request):
+    """
     config = request.FILES.get("dockerfile")
     name = time.strftime('%Y%m%d%H%M%S', time.localtime())
     with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
             f.write(chunk)
+    """
     tag = request.POST.get("tag")
-    docker_client.images.build(path='.' + TEMP_URL + name, tag=tag)
+    docker_client.images.build(fileobj=request.FILES.get("dockerfile"), tag=tag)
     return JsonResponse({"errno": 0, "msg": "创建镜像成功"})
