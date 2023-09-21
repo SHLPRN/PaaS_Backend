@@ -142,10 +142,11 @@ def list_services(request):
 def create_service(request):
     """创建service"""
     config = request.FILES.get('config')
-    with open('.' + TEMP_URL + config.name, 'wb+') as f:
+    name = time.strftime('%Y%m%d%H%M%S', time.localtime()) + config.name
+    with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
             f.write(chunk)
-    with open('.' + TEMP_URL + config.name, 'r') as f:
+    with open('.' + TEMP_URL + name, 'r') as f:
         service = yaml.safe_load(f)
     client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
     """
