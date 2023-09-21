@@ -85,7 +85,7 @@ def create_deployment(request):
     try:
         deployment = yaml.safe_load(request.FILES.get('config'))
         client.AppsV1Api().create_namespaced_deployment(namespace='default', body=deployment)
-        JsonResponse({'errno': 0, 'msg': '创建deployment成功'})
+        return JsonResponse({'errno': 0, 'msg': '创建deployment成功'})
     except:
         return JsonResponse({'errno': 3001, 'msg': '创建deployment失败'})
 
@@ -97,7 +97,7 @@ def update_deployment(request):
         deployment = yaml.safe_load(request.FILES.get('config'))
         client.AppsV1Api().replace_namespaced_deployment(namespace='default', name=request.POST.get('name'),
                                                          body=deployment)
-        JsonResponse({'errno': 0, 'msg': '更新deployment成功'})
+        return JsonResponse({'errno': 0, 'msg': '更新deployment成功'})
     except:
         return JsonResponse({'errno': 3002, 'msg': '更新deployment失败'})
 
@@ -143,7 +143,7 @@ def create_service(request):
         try:
             service = yaml.safe_load(request.FILES.get('config'))
             client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
-            JsonResponse({'errno': 0, 'msg': '创建service成功'})
+            return JsonResponse({'errno': 0, 'msg': '创建service成功'})
         except:
             return JsonResponse({'errno': 3004, 'msg': '创建service失败'})
         """
@@ -156,7 +156,7 @@ def update_service(request):
     try:
         service = yaml.safe_load(request.FILES.get('config'))
         client.CoreV1Api().replace_namespaced_service(namespace='default', name=request.POST.get('name'), body=service)
-        JsonResponse({'errno': 0, 'msg': '更新service成功'})
+        return JsonResponse({'errno': 0, 'msg': '更新service成功'})
     except:
         return JsonResponse({'errno': 3005, 'msg': '更新service失败'})
 
@@ -166,10 +166,9 @@ def delete_service(request):
     """删除service"""
     try:
         client.CoreV1Api().delete_namespaced_service(namespace='default', name=request.POST.get('name'))
-        JsonResponse({'errno': 0, 'msg': '删除service成功'})
+        return JsonResponse({'errno': 0, 'msg': '删除service成功'})
     except:
         return JsonResponse({'errno': 3006, 'msg': '删除service失败'})
-
 
 
 @csrf_exempt
@@ -183,5 +182,4 @@ def get_host_params(request):
     return JsonResponse({
         'cpu_count': psutil.cpu_count(),  # cpu 逻辑数量
         'virtual_memory': psutil.virtual_memory().percent  # cpu 内存使用率
-    }
-    )
+    })
