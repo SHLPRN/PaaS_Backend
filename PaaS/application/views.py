@@ -164,11 +164,15 @@ def update_service(request):
 @csrf_exempt
 def delete_service(request):
     """删除service"""
+    client.CoreV1Api().delete_namespaced_service(namespace='default', name=request.POST.get('name'))
+    """
     try:
         client.CoreV1Api().delete_namespaced_service(namespace='default', name=request.POST.get('name'))
         return JsonResponse({'errno': 0, 'msg': '删除service成功'})
     except:
         return JsonResponse({'errno': 3006, 'msg': '删除service失败'})
+    """
+    return JsonResponse({'errno': 0, 'msg': '删除service成功'})
 
 
 @csrf_exempt
