@@ -11,21 +11,22 @@ config.load_kube_config(config_file='./application/config/kubeconfig.yaml')
 def list_nodes(request):
     """获取node列表"""
     node_list = client.CoreV1Api().list_node()
-    data = [
-        {
+    data = []
+    for node in node_list.items:
+        data.append({
             'name': node.metadata.name,
             'kind': node.kind,
             'create_time': node.metadata.creation_timestamp,
-            'addresses': [
-                {
-                    'address': address.address,
-                    'type': address.type
-                } for address in node.status.addresses
-            ],
+            'hostname': None,
+            'internal_ip': None,
             'allocatable': node.status.allocatable,
             'capacity': node.status.capacity
-        } for node in node_list.items
-    ]
+        })
+        for address in node.status.addresses:
+            if address.type == 'Hostname':
+                data[-1]['hostname'] = address.address
+            elif address.type == 'InternalIP':
+                data[-1]['internal_ip'] = address.address
     return JsonResponse({'errno': 0, 'data': data})
 
 
