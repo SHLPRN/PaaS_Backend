@@ -146,7 +146,7 @@ def create_service(request):
         for chunk in config.chunks():
             f.write(chunk)
     with open('.' + TEMP_URL + config.name, 'r') as f:
-        service = yaml.safe_load(request.FILES.get('config'))
+        service = yaml.safe_load(f)
     client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
     """
     try:
