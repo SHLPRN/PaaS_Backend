@@ -1,3 +1,4 @@
+import psutil
 import yaml
 
 from django.http import JsonResponse
@@ -168,3 +169,19 @@ def delete_service(request):
         JsonResponse({'errno': 0, 'msg': '删除service成功'})
     except:
         return JsonResponse({'errno': 3006, 'msg': '删除service失败'})
+
+
+
+@csrf_exempt
+def get_host_params(request):
+    mem_percent = psutil.virtual_memory().percent
+    if mem_percent >= 0.97:
+        return JsonResponse({
+            'errno': 3007,
+            'msg': 'CPU内存使用率达到阈值，请小心使用'
+        })
+    return JsonResponse({
+        'cpu_count': psutil.cpu_count(),  # cpu 逻辑数量
+        'virtual_memory': psutil.virtual_memory().percent  # cpu 内存使用率
+    }
+    )

@@ -12,4 +12,5 @@ urlpatterns = [
     path('create_service', create_service, name='create_service'),
     path('update_service', update_service, name='update_service'),
     path('delete_service', delete_service, name='delete_service'),
+    path('get_host_params', get_host_params, name='get_host_params'),
 ]
