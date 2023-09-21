@@ -105,9 +105,16 @@ def create_deployment(request):
 def update_deployment(request):
     """更新deployment"""
     try:
-        deployment = yaml.safe_load(request.FILES.get('config'))
+        config = request.FILES.get('config')
+        name = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        with open('.' + TEMP_URL + name, 'wb+') as f:
+            for chunk in config.chunks():
+                f.write(chunk)
+        with open('.' + TEMP_URL + name, 'r') as f:
+            deployment = yaml.safe_load(f)
         client.AppsV1Api().replace_namespaced_deployment(namespace='default', name=request.POST.get('name'),
                                                          body=deployment)
+        os.remove('.' + TEMP_URL + name)
         return JsonResponse({'errno': 0, 'msg': '更新deployment成功'})
     except:
         return JsonResponse({'errno': 3002, 'msg': '更新deployment失败'})
@@ -167,8 +174,15 @@ def create_service(request):
 def update_service(request):
     """更新service"""
     try:
-        service = yaml.safe_load(request.FILES.get('config'))
+        config = request.FILES.get('config')
+        name = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        with open('.' + TEMP_URL + name, 'wb+') as f:
+            for chunk in config.chunks():
+                f.write(chunk)
+        with open('.' + TEMP_URL + name, 'r') as f:
+            service = yaml.safe_load(f)
         client.CoreV1Api().replace_namespaced_service(namespace='default', name=request.POST.get('name'), body=service)
+        os.remove('.' + TEMP_URL + name)
         return JsonResponse({'errno': 0, 'msg': '更新service成功'})
     except:
         return JsonResponse({'errno': 3005, 'msg': '更新service失败'})
