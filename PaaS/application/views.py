@@ -16,7 +16,12 @@ def list_nodes(request):
             'name': node.metadata.name,
             'kind': node.kind,
             'create_time': node.metadata.creation_timestamp,
-            'addresses': node.status.addresses,
+            'addresses': [
+                {
+                    'address': address.address,
+                    'type': address.type
+                } for address in node.status.addresses
+            ],
             'allocatable': node.status.allocatable,
             'capacity': node.status.capacity
         } for node in node_list.items
