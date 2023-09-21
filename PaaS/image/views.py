@@ -51,7 +51,6 @@ def build_image(request):
     with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
             f.write(chunk)
-    with open('.' + TEMP_URL + name, 'r') as f:
-        tag = request.POST.get("tag")
-        docker_client.images.build(fileobj=f, tag=tag)
+    tag = request.POST.get("tag")
+    docker_client.images.build(path='.' + TEMP_URL + name, tag=tag)
     return JsonResponse({"errno": 0, "msg": "创建镜像成功"})
