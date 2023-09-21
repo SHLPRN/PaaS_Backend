@@ -9,6 +9,8 @@ config.load_kube_config()
 
 docker_client = docker.from_env()
 
+TEMP_URL = '/media/temp/'
+
 
 @csrf_exempt
 def list_images(request):
