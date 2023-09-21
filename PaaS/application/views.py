@@ -1,7 +1,7 @@
+import os
 import time
-
-import psutil
 import yaml
+import psutil
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -87,8 +87,15 @@ def list_deployments(request):
 def create_deployment(request):
     """创建deployment"""
     try:
-        deployment = yaml.safe_load(request.FILES.get('config'))
+        config = request.FILES.get('config')
+        name = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        with open('.' + TEMP_URL + name, 'wb+') as f:
+            for chunk in config.chunks():
+                f.write(chunk)
+        with open('.' + TEMP_URL + name, 'r') as f:
+            deployment = yaml.safe_load(f)
         client.AppsV1Api().create_namespaced_deployment(namespace='default', body=deployment)
+        os.remove('.' + TEMP_URL + name)
         return JsonResponse({'errno': 0, 'msg': '创建deployment成功'})
     except:
         return JsonResponse({'errno': 3001, 'msg': '创建deployment失败'})
@@ -141,23 +148,19 @@ def list_services(request):
 @csrf_exempt
 def create_service(request):
     """创建service"""
-    config = request.FILES.get('config')
-    name = time.strftime('%Y%m%d%H%M%S', time.localtime())
-    with open('.' + TEMP_URL + name, 'wb+') as f:
-        for chunk in config.chunks():
-            f.write(chunk)
-    with open('.' + TEMP_URL + name, 'r') as f:
-        service = yaml.safe_load(f)
-    client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
-    """
     try:
-        service = yaml.safe_load(request.FILES.get('config'))
+        config = request.FILES.get('config')
+        name = time.strftime('%Y%m%d%H%M%S', time.localtime())
+        with open('.' + TEMP_URL + name, 'wb+') as f:
+            for chunk in config.chunks():
+                f.write(chunk)
+        with open('.' + TEMP_URL + name, 'r') as f:
+            service = yaml.safe_load(f)
         client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
+        os.remove('.' + TEMP_URL + name)
         return JsonResponse({'errno': 0, 'msg': '创建service成功'})
     except:
         return JsonResponse({'errno': 3004, 'msg': '创建service失败'})
-    """
-    return JsonResponse({'errno': 0, 'msg': '创建service成功'})
 
 
 @csrf_exempt
