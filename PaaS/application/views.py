@@ -184,7 +184,7 @@ def delete_service(request):
 @csrf_exempt
 def get_host_params(request):
     mem_percent = psutil.virtual_memory().percent
-    if mem_percent >= 0.97:
+    if mem_percent >= 97:
         return JsonResponse({
             'errno': 3007,
             'msg': 'CPU内存使用率达到阈值，请小心使用'
