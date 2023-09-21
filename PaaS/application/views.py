@@ -1,3 +1,5 @@
+import time
+
 import psutil
 import yaml
 
@@ -6,6 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from kubernetes import client, config
 
 config.load_kube_config(config_file='./application/config/kubeconfig.yaml')
+
+TEMP_URL = '/media/temp/'
 
 
 @csrf_exempt
@@ -137,7 +141,12 @@ def list_services(request):
 @csrf_exempt
 def create_service(request):
     """创建service"""
-    service = yaml.safe_load(request.FILES.get('config'))
+    config = request.FILES.get('config')
+    with open('.' + TEMP_URL + config.name, 'wb+') as f:
+        for chunk in config.chunks():
+            f.write(chunk)
+    with open('.' + TEMP_URL + config.name, 'r') as f:
+        service = yaml.safe_load(request.FILES.get('config'))
     client.CoreV1Api().create_namespaced_service(namespace='default', body=service)
     """
     try:
