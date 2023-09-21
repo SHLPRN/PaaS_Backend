@@ -1,9 +1,10 @@
-import docker
+import os
 import time
-from django.views.decorators.csrf import csrf_exempt
-from kubernetes import client, config
 import yaml
+import docker
+from kubernetes import client, config
 from django.http import JsonResponse, request
+from django.views.decorators.csrf import csrf_exempt
 
 config.load_kube_config()
 
@@ -54,4 +55,5 @@ def build_image(request):
     with open('.' + TEMP_URL + name, 'rb') as f:
         tag = request.POST.get("tag")
         docker_client.images.build(fileobj=f, tag=tag)
+    os.remove('.' + TEMP_URL + name)
     return JsonResponse({"errno": 0, "msg": "创建镜像成功"})
