@@ -142,7 +142,7 @@ def list_services(request):
 def create_service(request):
     """创建service"""
     config = request.FILES.get('config')
-    name = time.strftime('%Y%m%d%H%M%S', time.localtime()) + config.name
+    name = time.strftime('%Y%m%d%H%M%S', time.localtime())
     with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
             f.write(chunk)
