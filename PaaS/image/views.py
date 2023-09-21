@@ -47,7 +47,7 @@ def pull_image(request):
 @csrf_exempt
 def build_image(request):
     config = request.FILES.get("dockerfile")
-    name = time.strftime('%Y%m%d%H%M%S', time.localtime())
+    name = time.strftime('%Y%m%d%H%M%S', time.localtime()) + config.name
     with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
             f.write(chunk)
