@@ -48,7 +48,8 @@ def pull_image(request):
 @csrf_exempt
 def build_image(request):
     config = request.FILES.get("dockerfile")
-    tag = request.POST.get("tag")
+    # tag = request.POST.get("tag")
+    tag = "test-nginx:latest"
     name = time.strftime('%Y%m%d%H%M%S', time.localtime())
     with open('.' + TEMP_URL + name, 'wb+') as f:
         for chunk in config.chunks():
